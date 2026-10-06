@@ -95,7 +95,7 @@ git clone [https://github.com/saeedtx/instant-speculative-loading.git](https://g
 **Saeed Tosifyan**
 
 * Website: [medseo.ir](https://medseo.ir)
-* LinkedIn: [linkedin.com/in/saeedtx](https://www.google.com/search?q=https://linkedin.com/in/saeedtx)
+* LinkedIn: [linkedin.com/in/saeedtx](https://linkedin.com/in/saeedtx)
 
 ## License
 
