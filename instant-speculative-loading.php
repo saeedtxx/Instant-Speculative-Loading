@@ -32,8 +32,8 @@ final class Instant_Speculative_Loading {
      */
     public static function get_default_options(): array {
         return [
-            'mode'                 => 'prerender', // prerender | prefetch
-            'eagerness'            => 'moderate',  // moderate | conservative | eager
+            'mode'                 => 'prerender',
+            'eagerness'            => 'moderate',
             'disable_logged_in'    => '1',
             'respect_save_data'    => '1',
             'custom_exclude_paths' => "/wp-login.php*\n/*\\?*preview=true*\n/*\\?*action=logout*",
