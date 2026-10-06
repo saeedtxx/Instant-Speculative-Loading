@@ -8,7 +8,7 @@
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: instant-speculative-loading
- * Requires at least: 5.4
+ * Requires at least: 5.7
  * Requires PHP: 7.4
  */
 
@@ -17,10 +17,10 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * تزریق تگ بومی قوانین پیش‌بارگذاری (Speculation Rules) در فوتر
+ * تزریق بومی قوانین پیش‌بارگذاری (Speculation Rules) در فوتر
  */
 function isl_inject_speculation_rules() {
-    // عدم اجرا در پنل ادمین، فیدها، درخواست‌های REST یا پردازش‌های کرون
+    // عدم اجرا در پنل مدیریت، فیدها، درخواست‌های REST یا کرون
     if (is_admin() || is_feed() || (function_exists('wp_is_json_request') && wp_is_json_request()) || (defined('DOING_CRON') && DOING_CRON)) {
         return;
     }
@@ -51,11 +51,11 @@ function isl_inject_speculation_rules() {
     }
 
     /**
-     * امکان شخصی‌سازی مسیرهای استثنا توسط هوک فیلتر
+     * امکان شخصی‌سازی مسیرهای استثنا توسط فیلتر وردپرس
      */
     $exclude_paths = apply_filters('isl_speculation_rules_exclude_paths', $exclude_paths);
 
-    // ساختار استاندارد JSON بر اساس مستندات W3C و Chrome Dev
+    // ساختار استاندارد قوانین بر اساس مستندات W3C
     $rules = [
         'prerender' => [
             [
@@ -77,16 +77,21 @@ function isl_inject_speculation_rules() {
                         ]
                     ]
                 ],
-                'eagerness' => 'moderate' // پیش‌بارگذاری هوشمند با مکث ماوس (Hover Intent)
+                'eagerness' => 'moderate'
             ]
         ]
     ];
 
     $rules_json = wp_json_encode($rules, JSON_UNESCAPED_SLASHES);
 
-    if ($rules_json) {
-        echo "\n<!-- Instant Speculative Loading -->\n";
-        echo '<script type="speculationrules">' . $rules_json . '</script>' . "\n";
+    if (!empty($rules_json)) {
+        wp_print_inline_script_tag(
+            $rules_json,
+            [
+                'type' => 'speculationrules',
+                'id'   => 'instant-speculative-loading-rules',
+            ]
+        );
     }
 }
 
