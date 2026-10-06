@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 
 final class Instant_Speculative_Loading {
 
-    private const OPTION_KEY = 'isl_settings';
+    private const OPTION_KEY = 'instant_speculative_loading_settings';
 
     public static function init(): void {
         add_action('admin_menu', [__CLASS__, 'register_settings_menu']);
@@ -64,7 +64,7 @@ final class Instant_Speculative_Loading {
      */
     public static function register_settings(): void {
         register_setting(
-            'isl_settings_group',
+            'instant_speculative_loading_settings_group',
             self::OPTION_KEY,
             [
                 'type'              => 'array',
@@ -124,7 +124,7 @@ final class Instant_Speculative_Loading {
 
             <form method="post" action="options.php">
                 <?php
-                settings_fields('isl_settings_group');
+                settings_fields('instant_speculative_loading_settings_group');
                 ?>
                 <table class="form-table" role="presentation">
                     <tr>
@@ -147,9 +147,9 @@ final class Instant_Speculative_Loading {
                         <th scope="row"><?php esc_html_e('Eagerness Level', 'instant-speculative-loading'); ?></th>
                         <td>
                             <select name="<?php echo esc_attr(self::OPTION_KEY); ?>[eagerness]">
-                                <option value="moderate" <?php selected($opts['eagerness'], 'moderate'); ?>>Moderate (Triggers on hover intent / 200ms hold - Recommended)</option>
-                                <option value="conservative" <?php selected($opts['eagerness'], 'conservative'); ?>>Conservative (Triggers strictly on pointer down / mouse click start)</option>
-                                <option value="eager" <?php selected($opts['eagerness'], 'eager'); ?>>Eager (Triggers as soon as link enters viewport or loads)</option>
+                                <option value="moderate" <?php selected($opts['eagerness'], 'moderate'); ?>><?php esc_html_e('Moderate (Triggers on hover intent / 200ms hold - Recommended)', 'instant-speculative-loading'); ?></option>
+                                <option value="conservative" <?php selected($opts['eagerness'], 'conservative'); ?>><?php esc_html_e('Conservative (Triggers strictly on pointer down / mouse click start)', 'instant-speculative-loading'); ?></option>
+                                <option value="eager" <?php selected($opts['eagerness'], 'eager'); ?>><?php esc_html_e('Eager (Triggers as soon as link enters viewport or loads)', 'instant-speculative-loading'); ?></option>
                             </select>
                         </td>
                     </tr>
@@ -208,9 +208,12 @@ final class Instant_Speculative_Loading {
             return;
         }
 
-        // احترام به مود مصرف بهینه دیتا
-        if ($opts['respect_save_data'] === '1' && isset($_SERVER['HTTP_SAVE_DATA']) && strtolower((string)$_SERVER['HTTP_SAVE_DATA']) === 'on') {
-            return;
+        // بررسی بهداشتی و ایمن هدر Save-Data
+        if ($opts['respect_save_data'] === '1' && isset($_SERVER['HTTP_SAVE_DATA'])) {
+            $save_data = sanitize_text_field(wp_unslash($_SERVER['HTTP_SAVE_DATA']));
+            if (strtolower($save_data) === 'on') {
+                return;
+            }
         }
 
         $exclude_paths = [
@@ -245,7 +248,7 @@ final class Instant_Speculative_Loading {
             }
         }
 
-        $exclude_paths = apply_filters('isl_speculation_rules_exclude_paths', array_values(array_unique($exclude_paths)));
+        $exclude_paths = apply_filters('instant_speculative_loading_exclude_paths', array_values(array_unique($exclude_paths)));
 
         $default_binary_selectors = 'a[href$=".pdf"], a[href$=".zip"], a[href$=".rar"], a[href$=".mp4"], a[href$=".mp3"], a[href$=".tar.gz"], a[href$=".exe"]';
         $css_selectors = trim($opts['custom_exclude_css']);
