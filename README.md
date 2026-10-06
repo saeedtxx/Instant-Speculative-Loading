@@ -1,3 +1,4 @@
+![Instant Speculative Loading](assets/banner-772x250.png)
 
 # Instant Speculative Loading
 
